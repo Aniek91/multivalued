@@ -23,7 +23,7 @@ iloss <- function(y, offset, parms, wt) {
           #         ", expected loss=" , format(length(wt)),   #More results can be added here.
           sep='')
   }
-  list(y=y, parms=0, numresp=1, numy=1, summary=sfun)
+  list(y=y, parms=parms, numresp=1, numy=1, summary=sfun)
 }
 
 
@@ -36,8 +36,8 @@ iloss <- function(y, offset, parms, wt) {
 #    as the node is less acceptable is fine.
 #  - the measure underlies cost-complexity pruning, however
 eloss <- function(y, wt, parms){
-  indiv.loss.node <- indiv.loss[wt,]
-  classes <- 1:ncol(indiv.loss) 
+  indiv.loss.node <- parms$indiv.loss[wt,]
+  classes <- 1:ncol(parms$indiv.loss) 
   loss.per.class <- apply(indiv.loss.node, 2, sum)
   yopt <- classes[which.min(loss.per.class)]
   wme <- min(loss.per.class)                      #weighted misclassification error
@@ -81,7 +81,7 @@ sloss <- function(y, wt, x, parms, continuous)
   # print(wt)
   
   #Lisa: Select rows of indiv.losses that are in node
-  indiv.loss.node <- indiv.loss[wt,]
+  indiv.loss.node <- parms$indiv.loss[wt,]
   
   classes <- unique(y)                             #classes in parent node
   loss.per.class <- apply(indiv.loss.node, 2, sum) #misclassification error in parent node if node is assigned to class 1, 2, 3, ..., respectively
@@ -92,12 +92,12 @@ sloss <- function(y, wt, x, parms, continuous)
   if (continuous) {
     # continuous x variable
     for(i in 1:(n-1)){
-      left.loss <- matrix(indiv.loss.node[1:i,], ncol=ncol(indiv.loss))       #select individuals in left child node
+      left.loss <- matrix(indiv.loss.node[1:i,], ncol=ncol(parms$indiv.loss))       #select individuals in left child node
       left.loss.per.class <- apply(left.loss, 2, sum)                         #misclassification error in left child node if node is assigned to class 1, 2, 3, ..., respectively
       left.yopt <- classes[which.min(left.loss.per.class)]                    #class which results in minimum misclassification error
       left.error <- min(left.loss.per.class)                                  #minimum misclassification error in left child node
       
-      right.loss <-  matrix(indiv.loss.node[(i+1):n,], ncol=ncol(indiv.loss)) #select individuals in right child node
+      right.loss <-  matrix(indiv.loss.node[(i+1):n,], ncol=ncol(parms$indiv.loss)) #select individuals in right child node
       right.loss.per.class <- apply(right.loss, 2, sum)                       
       right.yopt <- classes[which.min(right.loss.per.class)]
       right.error <-min(right.loss.per.class)
@@ -117,12 +117,12 @@ sloss <- function(y, wt, x, parms, continuous)
       ord <- list.permutations[[j]]                                           #select j'th permutation
       n <- length(ord)                                                        #number of categories in x
       for(i in 1:(n-1)){                                                      #for every split in categories ... 
-        left.loss <- matrix(indiv.loss.node[x%in%ux[ord[1:i]],], ncol=ncol(indiv.loss))       #select individuals that go to the left           
+        left.loss <- matrix(indiv.loss.node[x%in%ux[ord[1:i]],], ncol=ncol(parms$indiv.loss))       #select individuals that go to the left           
         left.loss.per.class <- apply(left.loss, 2, sum)                                       #same code as for non-categorical ...
         left.yopt <- classes[which.min(left.loss.per.class)]
         left.error <- min(left.loss.per.class)
         
-        right.loss <-  matrix(indiv.loss.node[x%in%ux[ord[(i+1):n]],], ncol=ncol(indiv.loss))  
+        right.loss <-  matrix(indiv.loss.node[x%in%ux[ord[(i+1):n]],], ncol=ncol(parms$indiv.loss))  
         right.loss.per.class <- apply(right.loss, 2, sum)
         right.yopt <- classes[which.min(right.loss.per.class)]
         right.error <-min(right.loss.per.class)
