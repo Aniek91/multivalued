@@ -1,0 +1,14 @@
+---
+title: "Illustrative applicationEstimating Optimal Decision Trees for Treatment Assignment: The Case of K > 2 Treatment Alternatives"
+output: html_notebook
+---
+
+This is a notebook to replicate the illustrative application of the paper "Optimal Decision Trees for Treatment Assignment: The Case of K > 2 Treatment Alternatives". 
+
+```{r}
+source('Multivalued code snippet.r')
+library(quint)
+print(1+1)
+```
+
+
