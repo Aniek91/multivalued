@@ -1626,24 +1626,75 @@ Alternatives</h1>
 </div>
 
 
-<p>This is a notebook to replicate the illustrative application of the
+<p>This is a notebook to reproduce the illustrative application of the
 paper “Optimal Decision Trees for Treatment Assignment: The Case of K
 &gt; 2 Treatment Alternatives”.</p>
-For this application, the BCRP data set (available in the quint
-r-package) is used. We start by loading this data
+<pre class="r"><code>library(devtools)
+source(&quot;https://raw.githubusercontent.com/KULeuven-PPW-OKPIV/multivalued/main/Multivalued%20code%20snippet.R&quot;)
+library(quint)
+library(partykit)
+sessionInfo()</code></pre>
+<pre><code>## R version 4.3.0 (2023-04-21 ucrt)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 19044)
+## 
+## Matrix products: default
+## 
+## 
+## locale:
+## [1] LC_COLLATE=English_United Kingdom.utf8 
+## [2] LC_CTYPE=English_United Kingdom.utf8   
+## [3] LC_MONETARY=English_United Kingdom.utf8
+## [4] LC_NUMERIC=C                           
+## [5] LC_TIME=English_United Kingdom.utf8    
+## 
+## time zone: Europe/Amsterdam
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] grid      stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
+## 
+## other attached packages:
+## [1] quint_2.2.2     rpart_4.1.19    Formula_1.2-5   partykit_1.2-20
+## [5] mvtnorm_1.1-3   libcoin_1.0-9   combinat_0.0-8  devtools_2.4.5 
+## [9] usethis_2.1.6  
+## 
+## loaded via a namespace (and not attached):
+##  [1] sass_0.4.6        lattice_0.21-8    stringi_1.7.12    inum_1.0-5       
+##  [5] digest_0.6.31     magrittr_2.0.3    evaluate_0.21     pkgload_1.3.2    
+##  [9] fastmap_1.1.1     Matrix_1.5-4      jsonlite_1.8.4    processx_3.8.1   
+## [13] pkgbuild_1.4.0    sessioninfo_1.2.2 survival_3.5-5    urlchecker_1.0.1 
+## [17] ps_1.7.5          promises_1.2.0.1  purrr_1.0.1       jquerylib_0.1.4  
+## [21] cli_3.6.1         shiny_1.7.4       rlang_1.1.1       crayon_1.5.2     
+## [25] ellipsis_0.3.2    splines_4.3.0     remotes_2.4.2     cachem_1.0.8     
+## [29] yaml_2.3.7        tools_4.3.0       memoise_2.0.1     httpuv_1.6.11    
+## [33] vctrs_0.6.2       R6_2.5.1          mime_0.12         lifecycle_1.0.3  
+## [37] stringr_1.5.0     fs_1.6.2          htmlwidgets_1.6.2 miniUI_0.1.1.1   
+## [41] callr_3.7.3       bslib_0.4.2       later_1.3.1       glue_1.6.2       
+## [45] profvis_0.3.8     Rcpp_1.0.10       xfun_0.39         rstudioapi_0.14  
+## [49] knitr_1.43        xtable_1.8-4      htmltools_0.5.5   rmarkdown_2.21   
+## [53] compiler_4.3.0    prettyunits_1.1.1</code></pre>
+<p>For this application, the BCRP data set (available in the quint
+r-package) is used. We start by loading this data.</p>
+<pre class="r"><code>dt &lt;- na.omit(bcrp)
+dt$wcht1=factor(dt$wcht1)
+dt$nationality=factor(dt$nationality)
+dt$marital=factor(dt$marital)
+dt$cond=factor(dt$cond)
+head(dt)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["physt1"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["cesdt1"],"name":[2],"type":["int"],"align":["right"]},{"label":["physt3"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["cesdt3"],"name":[4],"type":["int"],"align":["right"]},{"label":["negsoct1"],"name":[5],"type":["int"],"align":["right"]},{"label":["uncomt1"],"name":[6],"type":["int"],"align":["right"]},{"label":["disopt1"],"name":[7],"type":["int"],"align":["right"]},{"label":["comorbid"],"name":[8],"type":["int"],"align":["right"]},{"label":["age"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["wcht1"],"name":[10],"type":["fct"],"align":["left"]},{"label":["nationality"],"name":[11],"type":["fct"],"align":["left"]},{"label":["marital"],"name":[12],"type":["fct"],"align":["left"]},{"label":["trext"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["cond"],"name":[14],"type":["fct"],"align":["left"]}],"data":[{"1":"37.65374","2":"14","3":"52.62905","4":"4","5":"9","6":"28","7":"14","8":"6","9":"29.48392","10":"1","11":"1","12":"0","13":"0.2589759","14":"3","_rn_":"1"},{"1":"53.64822","2":"10","3":"51.18797","4":"14","5":"7","6":"36","7":"10","8":"2","9":"44.66256","10":"1","11":"1","12":"1","13":"0.5557208","14":"1","_rn_":"2"},{"1":"63.84140","2":"8","3":"66.45392","4":"9","5":"6","6":"29","7":"15","8":"1","9":"43.09925","10":"1","11":"1","12":"0","13":"0.2589759","14":"2","_rn_":"3"},{"1":"38.72757","2":"2","3":"45.99656","4":"4","5":"5","6":"30","7":"17","8":"13","9":"46.93498","10":"1","11":"1","12":"1","13":"0.5557208","14":"2","_rn_":"4"},{"1":"55.85700","2":"0","3":"60.66603","4":"1","5":"10","6":"32","7":"22","8":"1","9":"41.09514","10":"0","11":"1","12":"1","13":"0.5557208","14":"2","_rn_":"5"},{"1":"53.06922","2":"0","3":"54.83928","4":"0","5":"8","6":"24","7":"21","8":"3","9":"44.44627","10":"1","11":"1","12":"1","13":"0.2589759","14":"3","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>We start by minimizing the misclassification costs using the AIPWE.
-To do so, we need an outcome- and propensity model. For the propensity
-model, we first use empirical proportions. The outcome model (with as
-response the difference in physical functioning between 9 months
-follow-up and baseline), includes main effects of all covariates, and
-their interaction with treatment.</p>
+<p>We first use the AIPWE as an estimator of the misclassification
+costs. To do so, we need an outcome- and propensity model. For the
+propensity model, we first use empirical proportions. The outcome model
+(with as response the difference in physical functioning between 9
+months follow-up and baseline), includes main effects of all covariates,
+and their interaction with treatment.</p>
 <pre class="r"><code>#Outcome model
-set.seed(1)
 model1 &lt;- lm(I(physt3 - physt1) ~ cond*(1+ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+ comorbid + age + wcht1+nationality+marital+trext), data=dt)
 
 ## make a prediction using the model for each observation and each treatment alternative.
@@ -1659,7 +1710,6 @@ data3[,&quot;cond&quot;] &lt;- as.factor(rep(3,N))
 u3 &lt;- predict.glm(model1, as.data.frame(data3))
 
 #Propensity (empirical proportions)
-set.seed(1)
 PRaipwe &lt;- table(dt$cond)/N  
 
 # AIPWE estimates
@@ -1686,7 +1736,8 @@ print(head(indiv.loss))</code></pre>
 ## [6,]  3.114457  0.00000  4.766833</code></pre>
 <p>Next, we estimate the optimal treatment regime using the estimated
 misclassification costs (with AIPWE), by means of the user defined
-splitting functions. We use five different seeds for pruning.</p>
+splitting functions in rpart. We use five different seeds for
+pruning.</p>
 <pre class="r"><code>## estimate optimal treatment regime
 fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+  
              comorbid + age + wcht1+nationality+marital+trext, 
@@ -1695,7 +1746,7 @@ fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disop
              parms=list(indiv.loss=t(sapply(1:nrow(dataCaipwe), function(b)   
              max(est.aipwe[b,])-est.aipwe[b,])))) ## use individual loss matrix estimated using AIPWE
 
-# Pruning based on five different seeds
+# Pruning and printing based on five different seeds
 trees_aipwe=list(c(0))
 for (i in 1:5){
   set.seed(111+i)
@@ -1748,15 +1799,10 @@ for (i in 1:5){
 ## 1) root 224 1369.418 2 *</code></pre>
 <p>Next, we use the theoretical proportions of 1/3 per treatment
 alternative as the propensity model and repeat the same procedure.</p>
-<pre class="r"><code>#Propensity (empirical proportions)
-set.seed(1)
+<pre class="r"><code>#Propensity (theoretical probabilties)
 PRaipwe &lt;- c(1/3,1/3,1/3) 
-cond=dt$cond
-Y=dt$physt3-dt$physt1
 
 # AIPWE estimates
-cond=dt$cond
-Y=dt$physt3-dt$physt1
 c1 &lt;- (Y*(cond==1)/PRaipwe[1]) - (((cond==1) - PRaipwe[1]) / PRaipwe[1]*u1)
 c2 &lt;- (Y*(cond==2)/PRaipwe[2]) - (((cond==2) - PRaipwe[2]) / PRaipwe[2]*u2)
 c3 &lt;- (Y*(cond==3)/PRaipwe[3]) - (((cond==3) - PRaipwe[3]) / PRaipwe[3]*u3)
@@ -1768,15 +1814,7 @@ dataCaipwe &lt;- cbind(as.factor(Zaipwe),dt[,c(1,2,5:14)])
 #individual loss matrix (for each observation and each treatment alternative, the cost compared to assignment to the optimal treatment)
 indiv.loss=t(sapply(1:nrow(dataCaipwe), function(b) max(est.aipwe[b,])-est.aipwe[b,]))
 
-print(head(indiv.loss))</code></pre>
-<pre><code>##             c1       c2        c3
-## [1,] 17.919336 20.44384  0.000000
-## [2,] 17.858854  0.00000  6.178263
-## [3,] 18.751767  0.00000 16.994702
-## [4,]  5.377797  0.00000 15.610797
-## [5,] 12.117874  0.00000 10.218105
-## [6,]  3.114457  0.00000  4.818958</code></pre>
-<pre class="r"><code>## estimate optimal treatment regime 
+## estimate optimal treatment regime 
 fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+  
              comorbid + age + wcht1+nationality+marital+trext, 
              data = dataCaipwe, weights=1:nrow(dataCaipwe), method=multirisk, 
@@ -1784,7 +1822,7 @@ fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disop
              parms=list(indiv.loss=t(sapply(1:nrow(dataCaipwe), function(b)   
              max(est.aipwe[b,])-est.aipwe[b,])))) ## use individual loss matrix estimated using AIPWE
 
-# pruning using five different seeds
+# pruning and printing using five different seeds
 trees_aipwe=list(c(0))
 for (i in 1:5){
   set.seed(111+i)
@@ -1864,14 +1902,15 @@ for(i in 1:3){
   Zaipwe &lt;- sapply(1:nrow(dt), function(b) which.max(est.rf[b,]))
   dataCaipwe &lt;- cbind(as.factor(Zaipwe),dt[,c(1,2,5:14)])
   
-  fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+                    
-               comorbid + age + wcht1+nationality+marital+trext, 
+  fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+                  comorbid + age + wcht1+nationality+marital+trext, 
                data = dataCaipwe, weights=1:nrow(dataCaipwe), method=multirisk,
                parms=list(indiv.loss=t(sapply(1:nrow(dataCaipwe), 
-                                              function(b) max(est.rf[b,])-est.rf[b,]))))
-  indiv.loss=t(sapply(1:nrow(dataCaipwe), function(b) max(est.rf[b,])-est.rf[b,]))
+               function(b) max(est.rf[b,])-est.rf[b,]))))
   
-  #pruning using five different seeds
+   indiv.loss=t(sapply(1:nrow(dataCaipwe), function(b)    
+               max(est.rf[b,])-est.rf[b,]))
+  
+  #pruning and printing using five different seeds
   for (j in 1:5){
     set.seed(1+j)
     xfit &lt;- xpred.rpart(fit, xval=20)

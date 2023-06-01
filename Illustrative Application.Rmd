@@ -11,7 +11,8 @@ output:
 This is a notebook to reproduce the illustrative application of the paper "Optimal Decision Trees for Treatment Assignment: The Case of K > 2 Treatment Alternatives". 
 
 ```{r, warning=0, message=FALSE}
-source('Multivalued code snippet.r')
+library(devtools)
+source("https://raw.githubusercontent.com/KULeuven-PPW-OKPIV/multivalued/main/Multivalued%20code%20snippet.R")
 library(quint)
 library(partykit)
 sessionInfo()
