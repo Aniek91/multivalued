@@ -1636,7 +1636,7 @@ library(partykit)
 sessionInfo()</code></pre>
 <pre><code>## R version 4.3.0 (2023-04-21 ucrt)
 ## Platform: x86_64-w64-mingw32/x64 (64-bit)
-## Running under: Windows 10 x64 (build 19044)
+## Running under: Windows 10 x64 (build 19045)
 ## 
 ## Matrix products: default
 ## 
@@ -1661,27 +1661,27 @@ sessionInfo()</code></pre>
 ## [9] usethis_2.1.6  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] sass_0.4.6        lattice_0.21-8    stringi_1.7.12    inum_1.0-5       
-##  [5] digest_0.6.31     magrittr_2.0.3    evaluate_0.21     pkgload_1.3.2    
-##  [9] fastmap_1.1.1     Matrix_1.5-4      jsonlite_1.8.4    processx_3.8.1   
-## [13] pkgbuild_1.4.0    sessioninfo_1.2.2 survival_3.5-5    urlchecker_1.0.1 
-## [17] ps_1.7.5          promises_1.2.0.1  purrr_1.0.1       jquerylib_0.1.4  
-## [21] cli_3.6.1         shiny_1.7.4       rlang_1.1.1       crayon_1.5.2     
-## [25] ellipsis_0.3.2    splines_4.3.0     remotes_2.4.2     cachem_1.0.8     
-## [29] yaml_2.3.7        tools_4.3.0       memoise_2.0.1     httpuv_1.6.11    
-## [33] vctrs_0.6.2       R6_2.5.1          mime_0.12         lifecycle_1.0.3  
-## [37] stringr_1.5.0     fs_1.6.2          htmlwidgets_1.6.2 miniUI_0.1.1.1   
-## [41] callr_3.7.3       bslib_0.4.2       later_1.3.1       glue_1.6.2       
-## [45] profvis_0.3.8     Rcpp_1.0.10       xfun_0.39         rstudioapi_0.14  
-## [49] knitr_1.43        xtable_1.8-4      htmltools_0.5.5   rmarkdown_2.21   
-## [53] compiler_4.3.0    prettyunits_1.1.1</code></pre>
+##  [1] styler_1.10.3     sass_0.4.6        lattice_0.21-8    stringi_1.7.12   
+##  [5] inum_1.0-5        digest_0.6.31     magrittr_2.0.3    evaluate_0.21    
+##  [9] pkgload_1.3.2     fastmap_1.1.1     Matrix_1.5-4      jsonlite_1.8.4   
+## [13] processx_3.8.1    pkgbuild_1.4.0    sessioninfo_1.2.2 survival_3.5-5   
+## [17] urlchecker_1.0.1  ps_1.7.5          promises_1.2.0.1  purrr_1.0.1      
+## [21] jquerylib_0.1.4   cli_3.6.1         shiny_1.7.4       rlang_1.1.1      
+## [25] crayon_1.5.2      splines_4.3.0     ellipsis_0.3.2    remotes_2.4.2    
+## [29] cachem_1.0.8      yaml_2.3.7        tools_4.3.0       memoise_2.0.1    
+## [33] httpuv_1.6.11     vctrs_0.6.2       R6_2.5.1          mime_0.12        
+## [37] lifecycle_1.0.3   stringr_1.5.0     fs_1.6.2          htmlwidgets_1.6.2
+## [41] miniUI_0.1.1.1    callr_3.7.3       bslib_0.4.2       later_1.3.1      
+## [45] glue_1.6.2        profvis_0.3.8     Rcpp_1.0.10       xfun_0.39        
+## [49] rstudioapi_0.14   knitr_1.43        xtable_1.8-4      htmltools_0.5.5  
+## [53] rmarkdown_2.21    compiler_4.3.0    prettyunits_1.1.1</code></pre>
 <p>For this application, the BCRP data set (available in the quint
 r-package) is used. We start by loading this data.</p>
 <pre class="r"><code>dt &lt;- na.omit(bcrp)
-dt$wcht1=factor(dt$wcht1)
-dt$nationality=factor(dt$nationality)
-dt$marital=factor(dt$marital)
-dt$cond=factor(dt$cond)
+dt$wcht1 &lt;- factor(dt$wcht1)
+dt$nationality &lt;- factor(dt$nationality)
+dt$marital &lt;- factor(dt$marital)
+dt$cond &lt;- factor(dt$cond)
 head(dt)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -1724,7 +1724,7 @@ est.aipwe &lt;- cbind(c1,c2,c3)
 Zaipwe &lt;- sapply(1:nrow(dt), function(b) which.max(est.aipwe[b,]))
 dataCaipwe &lt;- cbind(as.factor(Zaipwe),dt[,c(1,2,5:14)])
 # individual loss matrix (for each observation and each treatment alternative, the cost compared to assignment to the optimal treatment)
-indiv.loss=t(sapply(1:nrow(dataCaipwe), function(b) max(est.aipwe[b,])-est.aipwe[b,]))
+indiv.loss &lt;- t(sapply(1:nrow(dataCaipwe), function(b) max(est.aipwe[b,])-est.aipwe[b,]))
 
 print(head(indiv.loss))</code></pre>
 <pre><code>##             c1       c2        c3
@@ -1739,7 +1739,7 @@ misclassification costs (with AIPWE), by means of the user defined
 splitting functions in rpart. We use five different seeds for
 pruning.</p>
 <pre class="r"><code>## estimate optimal treatment regime
-fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+  
+fit &lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+  
              comorbid + age + wcht1+nationality+marital+trext, 
              data = dataCaipwe, weights=1:nrow(dataCaipwe), method=multirisk, 
              ## multirisk is the user defined splitting function
@@ -1747,7 +1747,7 @@ fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disop
              max(est.aipwe[b,])-est.aipwe[b,])))) ## use individual loss matrix estimated using AIPWE
 
 # Pruning and printing based on five different seeds
-trees_aipwe=list(c(0))
+trees_aipwe &lt;- list(c(0))
 for (i in 1:5){
   set.seed(111+i)
   xfit &lt;- xpred.rpart(fit,xval=20)
@@ -1756,7 +1756,7 @@ for (i in 1:5){
   xerror
   cp1 &lt;- fit$cptable[which.min(xerror),1]
   fitpr &lt;- prune(fit, cp=cp1)
-  trees_aipwe[[i]]=fitpr
+  trees_aipwe[[i]] &lt;- fitpr
   print(trees_aipwe[[i]])
 }</code></pre>
 <pre><code>## n= 224 
@@ -1812,7 +1812,7 @@ est.aipwe &lt;- cbind(c1,c2,c3)
 Zaipwe &lt;- sapply(1:nrow(dt), function(b) which.max(est.aipwe[b,]))
 dataCaipwe &lt;- cbind(as.factor(Zaipwe),dt[,c(1,2,5:14)])
 #individual loss matrix (for each observation and each treatment alternative, the cost compared to assignment to the optimal treatment)
-indiv.loss=t(sapply(1:nrow(dataCaipwe), function(b) max(est.aipwe[b,])-est.aipwe[b,]))
+indiv.loss &lt;- t(sapply(1:nrow(dataCaipwe), function(b) max(est.aipwe[b,])-est.aipwe[b,]))
 
 ## estimate optimal treatment regime 
 fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+  
@@ -1823,7 +1823,7 @@ fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disop
              max(est.aipwe[b,])-est.aipwe[b,])))) ## use individual loss matrix estimated using AIPWE
 
 # pruning and printing using five different seeds
-trees_aipwe=list(c(0))
+trees_aipwe &lt;- list(c(0))
 for (i in 1:5){
   set.seed(111+i)
   xfit &lt;- xpred.rpart(fit,xval=20)
@@ -1832,7 +1832,7 @@ for (i in 1:5){
   xerror
   cp1 &lt;- fit$cptable[which.min(xerror),1]
   fitpr &lt;- prune(fit, cp=cp1)
-  trees_aipwe[[i]]=fitpr
+  trees_aipwe[[i]] &lt;- fitpr
   print(trees_aipwe[[i]])
 }</code></pre>
 <pre><code>## n= 224 
@@ -1875,17 +1875,17 @@ for (i in 1:5){
 costs. We use 3 different seeds for estimating the random forest-based
 misclassification costs. For estimating the optimal treatment regimes,
 we again use 5 seeds for pruning.</p>
-<pre class="r"><code>trees_rf=list(c(0))
+<pre class="r"><code>trees_rf &lt;- list(c(0))
 
 library(ranger)
-N=nrow(dt)
-resp=dt$physt3-dt$physt1
+N &lt;- nrow(dt)
+resp &lt;- dt$physt3-dt$physt1
 
 # Use three different seeds for random forest
-k=1
+k &lt;- 1
 for(i in 1:3){
   set.seed(1+i)
-  RF= ranger(x=dt[,c(1,2,5:14)], y= resp ,always.split.variables=&quot;cond&quot;)
+  RF &lt;-  ranger(x=dt[,c(1,2,5:14)], y= resp ,always.split.variables=&quot;cond&quot;)
   data1 &lt;- dt[,c(1,2,5:14)]
   data1[,&quot;cond&quot;] &lt;- as.factor(rep(1,N))
   data2 &lt;- dt[,c(1,2,5:14)]
@@ -1893,21 +1893,21 @@ for(i in 1:3){
   data3 &lt;- dt[,c(1,2,5:14)]
   data3[,&quot;cond&quot;] &lt;- as.factor(rep(3,N))
   
-  total=data.frame(rbind(data1,data2,data3))
-  preds=predict(RF, total)
-  est.rf = as.matrix(data.frame(u1=preds$predictions[1:224],       
+  total &lt;- data.frame(rbind(data1,data2,data3))
+  preds &lt;- predict(RF, total)
+  est.rf &lt;-  as.matrix(data.frame(u1=preds$predictions[1:224],       
                                 u2=preds$predictions[225:448], 
                                 u3=preds$predictions[449:672]))
   
   Zaipwe &lt;- sapply(1:nrow(dt), function(b) which.max(est.rf[b,]))
   dataCaipwe &lt;- cbind(as.factor(Zaipwe),dt[,c(1,2,5:14)])
   
-  fit&lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+                  comorbid + age + wcht1+nationality+marital+trext, 
+  fit &lt;-  rpart(as.numeric(Zaipwe) ~ cesdt1 + physt1+ negsoct1 + uncomt1 + disopt1+                  comorbid + age + wcht1+nationality+marital+trext, 
                data = dataCaipwe, weights=1:nrow(dataCaipwe), method=multirisk,
                parms=list(indiv.loss=t(sapply(1:nrow(dataCaipwe), 
                function(b) max(est.rf[b,])-est.rf[b,]))))
   
-   indiv.loss=t(sapply(1:nrow(dataCaipwe), function(b)    
+   indiv.loss &lt;- t(sapply(1:nrow(dataCaipwe), function(b)    
                max(est.rf[b,])-est.rf[b,]))
   
   #pruning and printing using five different seeds
@@ -1920,8 +1920,8 @@ for(i in 1:3){
     cp1 &lt;- fit$cptable[which.min(xerror),1]
     fitpr &lt;- prune(fit, cp=cp1)
     print(fitpr)
-    trees_rf[[k]]= fitpr
-    k=k+1
+    trees_rf[[k]] &lt;-  fitpr
+    k &lt;- k+1
   }
 }</code></pre>
 <pre><code>## n= 224 
