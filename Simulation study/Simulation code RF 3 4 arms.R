@@ -52,7 +52,7 @@ in_interval <- function(splits, true, margin){
 }
   
 ####################################
-### RG method to estimate regime ###
+### RF method to estimate regime ###
 ####################################
 library(ranger)
 RF <- function(arms, scenario, n.arm, meandif, model,a,dataAipweE, h){  
